@@ -293,7 +293,7 @@ class CellDetector(TabProcessor):
                                     sink=self.workspace.filename('cells', postfix='filtered'),
                                     thresholds=thresholds)
 
-    def run_cell_detection(self, tuning=False, save_shape=False):
+    def run_cell_detection(self, tuning=False, save_shape=False,save_as_binary_mask=False):
         self.processing_config.reload()
         self.workspace.debug = tuning  # TODO: use context manager
         cell_detection_param = copy.deepcopy(cell_detection.default_cell_detection_parameter)
@@ -310,6 +310,9 @@ class CellDetector(TabProcessor):
 
         if save_shape:
             cell_detection_param['shape_detection']['save'] = self.workspace.filename('cells', postfix='shape')
+            if save_as_binary_mask:
+                cell_detection_param['shape_detection']['save_dtype'] = 'bool'
+
 
             # clearmap_io.delete_file(workspace.filename('cells', postfix='maxima'))
             # cell_detection_param['maxima_detection']['save'] = workspace.filename('cells', postfix='maxima')
