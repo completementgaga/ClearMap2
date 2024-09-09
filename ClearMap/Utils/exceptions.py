@@ -17,6 +17,12 @@ class ClearMapIoException(ClearMapException):
     pass
 
 
+class ClearMapValueError(ClearMapException,ValueError):
+    """
+    Base exception for all exceptions related to input/output operations
+    """
+    pass
+
 class SourceModuleNotFoundError(ClearMapIoException):
     """
     Exception raised when a source module is not found
