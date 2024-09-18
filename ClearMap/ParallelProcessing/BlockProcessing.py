@@ -524,7 +524,8 @@ def block_sizes(
     # the double minus is to take the ceil rather than the floor fo the / quotient: -(-3//2)=2, 3//2=1
     n_blocks = -(-(size - overlap) // (block_size - overlap))  # at least 1 from the estimates above, 
     if not fixed:
-        block_size = float(size + (n_blocks - 1) * overlap) / n_blocks
+        # least block size with n_blocks blocks
+        block_size = (size + (n_blocks - 1) * overlap) / n_blocks
     if block_size < size_min:
         block_size = size_min
 
