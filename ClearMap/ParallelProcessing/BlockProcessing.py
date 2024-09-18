@@ -500,8 +500,7 @@ def block_sizes(
     elif size_min is None:
         size_min = min(size_max, overlap + 1)
 
-    if size_min > size:
-        size_min = size
+    size_min = min(size,size_min)
 
     # check consistency
     if size_min > size_max:
