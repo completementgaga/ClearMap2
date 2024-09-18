@@ -644,9 +644,7 @@ def _actual_sizes(size, block_size, n_blocks, overlap, fixed):
         block_ranges.append((lo, hi))
 
         # borders
-        valid = int(round((hi_prev + lo) / 2.0 ))
-        if valid > size:
-            valid = size
+        valid = int(round((hi_prev + lo) / 2.0))
         valid_ranges.append((valid_prev, valid))
         valid_prev = valid
 
