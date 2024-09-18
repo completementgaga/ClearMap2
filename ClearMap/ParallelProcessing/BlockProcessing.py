@@ -479,7 +479,7 @@ def block_sizes(
     if processes is None:
         processes = mp.cpu_count()
     if not isinstance(processes, int) or processes <=0:
-        warnings.warn("The passed processes value was not a positive integer")
+        warnings.warn("The passed processes value was not a positive integer, setting it to 1.")
         processes = 1
 
     if size_max is None or size_max > size:
