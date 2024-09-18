@@ -455,9 +455,9 @@ def block_sizes(
       If None, the overlap defaults to zero.
     optimization : bool
       If True, optimize block sizes to best fit number of processes.
-    optimization_fix : 'increase', 'decrease', 'all' or None
+    optimization_fix : 'increase', 'decrease', 'all'
       Increase, decrease or optimally change the block size when optimization
-      is active.
+      is active. Note that the increase or 'all' option might lead to blocks bigger than max_size.
     verbose : bool
       Print information on block generation.
 
