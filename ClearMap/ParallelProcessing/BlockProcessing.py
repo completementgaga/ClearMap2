@@ -628,7 +628,7 @@ def _actual_sizes(size, block_size, n_blocks, overlap, fixed):
 
         # range
         hi_prev = hi
-        lo = hi - overlap
+        lo = hi_prev - overlap
         hi = lo + block_size
 
         sr += block_size_rest
