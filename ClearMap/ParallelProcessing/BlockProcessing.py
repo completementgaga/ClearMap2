@@ -526,8 +526,7 @@ def block_sizes(
     if not fixed:
         # least block size with n_blocks blocks
         block_size = (size + (n_blocks - 1) * overlap) / n_blocks
-    if block_size < size_min:
-        block_size = size_min
+    block_size = min(size_min, block_size)
 
     if verbose:
         print("Estimated block size %d in %d blocks!" % (block_size, n_blocks))
