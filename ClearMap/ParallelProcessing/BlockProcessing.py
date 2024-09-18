@@ -503,11 +503,6 @@ def block_sizes(
         size_min = size
 
     # check consistency
-    if size_min > size:
-        raise RuntimeError(
-            "Minimal block size is larger than the data size %d > %d !"
-            % (size_min, size)
-        )
     if size_min > size_max:
         raise RuntimeError(
             "Minimal block size larger than maximal block size %d > %d !"
