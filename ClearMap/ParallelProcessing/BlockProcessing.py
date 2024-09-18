@@ -496,6 +496,7 @@ def block_sizes(
         size_min = size_max
         fixed = True
         optimization = False
+        
     elif size_min is None:
         size_min = min(size_max, overlap + 1)
 
@@ -513,9 +514,8 @@ def block_sizes(
             "Overlap is larger than maximal block size: %d >= %d!" % (overlap, size_max)
         )
     if overlap >= size_min:
-        raise ValueError(
-            "Overlap is larger than minimal block size: %d >= %d!" % (overlap, size_min)
-        )
+        # we can deal with since size_max > overlap, from above case overlap >= size_max.
+        size_min = overlap + 1
 
     # calcualte block size estimates
     block_size = size_max
