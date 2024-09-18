@@ -540,16 +540,16 @@ def block_sizes(
         n_add = n_blocks % processes
         if n_add != 0:
             if optimization_fix in [None, "all", all]:
-                if n_add < processes / 2.0:
+                if n_add < processes / 2:
                     optimization_fix = "increase"
                 else:
                     optimization_fix = "decrease"
 
             if verbose:
-                print("Optimizing block size to fit number of processes!")
+                print("Optimizing block size to fit a multiple of number of processes!")
 
             if optimization_fix == "decrease":
-                # try to deccrease block size / increase block number to fit distribution on processors
+                # try to decrease block size / increase block number to fit distribution on processors
                 n_blocks = n_blocks - n_add + processes
                 block_size = float(size + (n_blocks - 1) * overlap) / n_blocks
 
