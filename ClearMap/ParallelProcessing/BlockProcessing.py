@@ -523,8 +523,6 @@ def block_sizes(
     # n_blocks below is the least number of blocks we may use with the size_max constraint.
     # the double minus is to take the ceil rather than the floor fo the / quotient: -(-3//2)=2, 3//2=1
     n_blocks = -(-(size - overlap) // (block_size - overlap))  # at least 1 from the estimates above, 
-    if n_blocks <= 0:
-        n_blocks = 1
     if not fixed:
         block_size = float(size + (n_blocks - 1) * overlap) / n_blocks
     if block_size < size_min:
