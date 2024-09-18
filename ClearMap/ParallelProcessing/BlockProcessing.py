@@ -549,7 +549,7 @@ def block_sizes(
             if optimization_fix == "decrease":
                 # try to decrease block size / increase block number to fit distribution on processors
                 n_blocks = n_blocks - n_add + processes
-                block_size = float(size + (n_blocks - 1) * overlap) / n_blocks
+                block_size = (size + (n_blocks - 1) * overlap) / n_blocks
 
                 if verbose:
                     print(
@@ -560,7 +560,7 @@ def block_sizes(
             elif optimization_fix == "increase" and n_blocks > n_add:
                 # try to increase chunk size and decrease chunk number to fit  processors
                 n_blocks = n_blocks - n_add
-                block_size = float(size + (n_blocks - 1) * overlap) / n_blocks
+                block_size = (size + (n_blocks - 1) * overlap) / n_blocks
 
                 if verbose:
                     print(
