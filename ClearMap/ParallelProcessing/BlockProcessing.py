@@ -517,9 +517,12 @@ def block_sizes(
         # we can deal with since size_max > overlap, from above case overlap >= size_max.
         size_min = overlap + 1
 
-    # calcualte block size estimates
-    block_size = size_max
-    n_blocks = int(np.ceil(float(size - block_size) / (block_size - overlap) + 1))
+    # we end up with size>=size_max>=size_min>overlap 
+    # calculate block size estimates
+    block_size = size_max # hence block_size - overlap >0 and size - overlap > 0
+    # n_blocks below is the least number of blocks we may use with the size_max constraint.
+    # the double minus is to take the ceil rather than the floor fo the / quotient: -(-3//2)=2, 3//2=1
+    n_blocks = -(-(size - overlap) // (block_size - overlap))  # at least 1 from the estimates above, 
     if n_blocks <= 0:
         n_blocks = 1
     if not fixed:
