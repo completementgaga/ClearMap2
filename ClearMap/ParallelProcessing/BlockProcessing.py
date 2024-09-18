@@ -470,6 +470,8 @@ def block_sizes(
       Ranges of the blocks of the form [(lo0,hi0),(lo1,hi1),...].
     valid_ranges : list of tuple of ints
       Valid ranges of the blocks of the form [(lo0,hi0),(lo1,hi1),...].
+      the corresponding elements have distance >= overlap/2 to the exterior of the block.
+      
 
     Note
     ----
