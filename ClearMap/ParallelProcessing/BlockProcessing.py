@@ -457,7 +457,8 @@ def block_sizes(
       If True, optimize block sizes to best fit number of processes.
     optimization_fix : 'increase', 'decrease', 'all'
       Increase, decrease or optimally change the block size when optimization
-      is active. Note that the increase or 'all' option might lead to blocks bigger than max_size.
+      is active. Note that choosing 'increase' or 'all' option might lead to blocks bigger than size_max
+      and that 'decrease' or 'all' option might lead to blocks smaller than size_min
     verbose : bool
       Print information on block generation.
 
@@ -582,7 +583,7 @@ def block_sizes(
     if block_size < size_min:
         # raise Warning("Warning: Some chunks with average chunk size %f.02 may be smaller than minima chunk size %d!" % (chunksize, sizeMin));
         if verbose:
-            print(
+            (
                 "Warning: Some blocks with average block size %.02f may be smaller than minimal block size %d due to optimization!"
                 % (block_size, size_min)
             )
