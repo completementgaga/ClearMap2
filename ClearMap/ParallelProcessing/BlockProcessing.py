@@ -595,7 +595,24 @@ def block_sizes(
                 % (block_size, size_max)
             )
 
-            # calculate actual block sizes
+    # calculate actual block sizes
+    block_ranges, valid_ranges =_actual_sizes(size, block_size, n_blocks, overlap, fixed)
+
+    if verbose:
+        n_prt = min(10, n_blocks)
+        if n_blocks > n_prt:
+            pr = "..."
+        else:
+            pr = ""
+        print("Final blocks : %d" % n_blocks)
+        print("Final blocks : " + str(block_ranges[:n_prt]) + pr)
+        print("Final borders: " + str(valid_ranges[:n_prt]) + pr)
+        sizes = np.unique([r[1] - r[0] for r in block_ranges])
+        print("Final sizes  : " + str(sizes))
+
+    return block_ranges, valid_ranges
+
+def _actual_sizes(size, block_size, n_blocks, overlap, fixed):
     block_size_rest = block_size
     block_size = int(np.floor(block_size))
     block_size_rest = block_size_rest - block_size
@@ -635,19 +652,7 @@ def block_sizes(
 
     valid_ranges.append((valid_prev, size))
 
-    if verbose:
-        n_prt = min(10, n_blocks)
-        if n_blocks > n_prt:
-            pr = "..."
-        else:
-            pr = ""
-        print("Final blocks : %d" % n_blocks)
-        print("Final blocks : " + str(block_ranges[:n_prt]) + pr)
-        print("Final borders: " + str(valid_ranges[:n_prt]) + pr)
-        sizes = np.unique([r[1] - r[0] for r in block_ranges])
-        print("Final sizes  : " + str(sizes))
-
-    return n_blocks, block_ranges, valid_ranges
+    return block_ranges, valid_ranges
 
 
 def block_axes(source, axes=None):
