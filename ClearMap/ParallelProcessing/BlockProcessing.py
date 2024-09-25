@@ -294,25 +294,17 @@ def process(
         with CancelableProcessPoolExecutor(max_workers=processes) as executor:
             if workspace is not None:
                 workspace.executor = executor
-            futures = [
-                executor.submit(func, *args) for args in zip(source_blocks, sink_blocks)
-            ]
+            futures = [executor.submit(func, *args) for args in zip(source_blocks, sink_blocks)]
             # res = executor.map(func, source_blocks, sink_blocks)
-            result = [
-                f.result() for f in futures
-            ]  # To prevent keeping references to futures to avoid mem leaks
+            result = [f.result() for f in futures]  # To prevent keeping references to futures to avoid mem leaks
             # result = list(res)
             if workspace is not None:
                 workspace.executor = None
     else:
-        result = [
-            func(*args) for args in zip(source_blocks, sink_blocks)
-        ]  # analysis:ignore
+        result = [func(*args) for args in zip(source_blocks, sink_blocks)]  # analysis:ignore
 
     if verbose:
-        timer.print_elapsed_time(
-            "Processed %d blocks with function %r" % (n_blocks, function.__name__)
-        )
+        timer.print_elapsed_time("Processed %d blocks with function %r" % (n_blocks, function.__name__))
 
     # gc.collect();
 
@@ -331,9 +323,7 @@ def process(
 
 
 @ptb.parallel_traceback
-def process_block_source(
-    sources, sinks, function, as_memory=False, as_array=False, verbose=False, **kwargs
-):
+def process_block_source(sources, sinks, function, as_memory=False, as_array=False, verbose=False, **kwargs):
     """Process a block with full traceback.
 
     Arguments
@@ -471,7 +461,7 @@ def block_sizes(
     valid_ranges : list of tuple of ints
       Valid ranges of the blocks of the form [(lo0,hi0),(lo1,hi1),...].
       the corresponding elements have distance >= overlap/2 to the exterior of the block.
-      
+
 
     Note
     ----
@@ -481,7 +471,7 @@ def block_sizes(
     """
     if processes is None:
         processes = mp.cpu_count()
-    if not isinstance(processes, int) or processes <=0:
+    if not isinstance(processes, int) or processes <= 0:
         warnings.warn("The passed processes value was not a positive integer, setting it to 1.")
         processes = 1
 
@@ -499,36 +489,31 @@ def block_sizes(
         size_min = size_max
         fixed = True
         optimization = False
-        
+
     elif size_min is None:
         size_min = min(size_max, overlap + 1)
 
-    size_min = min(size,size_min)
+    size_min = min(size, size_min)
 
     # check consistency
     if size_min > size_max:
-        raise RuntimeError(
-            "Minimal block size larger than maximal block size %d > %d !"
-            % (size_min, size_max)
-        )
+        raise RuntimeError("Minimal block size larger than maximal block size %d > %d !" % (size_min, size_max))
     if overlap >= size_max:
-        raise ValueError(
-            "Overlap is larger than maximal block size: %d >= %d!" % (overlap, size_max)
-        )
+        raise ValueError("Overlap is larger than maximal block size: %d >= %d!" % (overlap, size_max))
     if overlap >= size_min:
         # we can deal with since size_max > overlap, from above case overlap >= size_max.
         size_min = overlap + 1
 
-    # we end up with size>=size_max>=size_min>overlap 
+    # we end up with size>=size_max>=size_min>overlap
     # calculate block size estimates
-    block_size = size_max # hence block_size - overlap >0 and size - overlap > 0
+    block_size = size_max  # hence block_size - overlap >0 and size - overlap > 0
     # n_blocks below is the least number of blocks we may use with the size_max constraint.
     # the double minus is to take the ceil rather than the floor fo the / quotient: -(-3//2)=2, 3//2=1
-    n_blocks = -(-(size - overlap) // (block_size - overlap))  # at least 1 from the estimates above, 
+    n_blocks = -(-(size - overlap) // (block_size - overlap))  # at least 1 from the estimates above,
     if not fixed:
         # least block size with n_blocks blocks
         block_size = (size + (n_blocks - 1) * overlap) / n_blocks
-    block_size = min(size_min, block_size)
+    block_size = max(size_min, block_size)
 
     if verbose:
         print("Estimated block size %d in %d blocks!" % (block_size, n_blocks))
@@ -555,10 +540,7 @@ def block_sizes(
                 block_size = (size + (n_blocks - 1) * overlap) / n_blocks
 
                 if verbose:
-                    print(
-                        "Optimized block size decreased to %d in %d blocks!"
-                        % (block_size, n_blocks)
-                    )
+                    print("Optimized block size decreased to %d in %d blocks!" % (block_size, n_blocks))
 
             elif optimization_fix == "increase" and n_blocks > n_add:
                 # try to increase chunk size and decrease chunk number to fit  processors
@@ -566,17 +548,11 @@ def block_sizes(
                 block_size = (size + (n_blocks - 1) * overlap) / n_blocks
 
                 if verbose:
-                    print(
-                        "Optimized block size increased to %d in %d blocks!"
-                        % (block_size, n_blocks)
-                    )
+                    print("Optimized block size increased to %d in %d blocks!" % (block_size, n_blocks))
 
             else:
                 if verbose:
-                    print(
-                        "Optimized block size %d unchanged in %d blocks!"
-                        % (block_size, n_blocks)
-                    )
+                    print("Optimized block size %d unchanged in %d blocks!" % (block_size, n_blocks))
 
         else:
             if verbose:
@@ -598,7 +574,7 @@ def block_sizes(
             )
 
     # calculate actual block sizes
-    block_ranges, valid_ranges =_actual_sizes(size, block_size, n_blocks, overlap, fixed)
+    block_ranges, valid_ranges = _actual_sizes(size, block_size, n_blocks, overlap, fixed)
 
     if verbose:
         n_prt = min(10, n_blocks)
@@ -612,7 +588,8 @@ def block_sizes(
         sizes = np.unique([r[1] - r[0] for r in block_ranges])
         print("Final sizes  : " + str(sizes))
 
-    return block_ranges, valid_ranges
+    return n_blocks, block_ranges, valid_ranges
+
 
 def _actual_sizes(size, block_size, n_blocks, overlap, fixed):
     block_size_rest = block_size
@@ -688,9 +665,7 @@ def block_axes(source, axes=None):
         axes = [d for d in range(source.ndim)]
     if axes is not None:
         if np.max(axes) >= source.ndim or np.min(axes) < 0:
-            raise ValueError(
-                f"Axes specification {axes} for source with dimension {source.ndim} not valid!"
-            )
+            raise ValueError(f"Axes specification {axes} for source with dimension {source.ndim} not valid!")
         return axes
 
     source = io.as_source(source)
@@ -799,13 +774,8 @@ def split_into_blocks(
     index_to_block = {}
     for i in range(blocks_size):
         index = np.unravel_index(i, blocks_shape)
-        slicing = tuple(
-            slice(b[0], b[1])
-            for b in [blocks_block_ranges[d][index[d]] for d in range(ndim)]
-        )
-        offsets = [
-            (o[0], o[1]) for o in [blocks_offsets[d][index[d]] for d in range(ndim)]
-        ]
+        slicing = tuple(slice(b[0], b[1]) for b in [blocks_block_ranges[d][index[d]] for d in range(ndim)])
+        offsets = [(o[0], o[1]) for o in [blocks_offsets[d][index[d]] for d in range(ndim)]]
         block = blk.Block(
             source=source,
             slicing=slicing,
@@ -844,9 +814,7 @@ def _unpack(values, ndim=None):
         values = [values] * (ndim or 1)
 
     if ndim is not None and len(values) != ndim:
-        raise ValueError(
-            "Dimension %d does not match data dimensions %d" % (len(values), ndim)
-        )
+        raise ValueError("Dimension %d does not match data dimensions %d" % (len(values), ndim))
 
     return values
 
@@ -863,9 +831,7 @@ def _test():
 
     source = io.as_source(np.asarray(np.random.rand(50, 100, 200), order="F"))
 
-    blocks = bp.split_into_blocks(
-        source, processes=10, axes=[2], size_min=30, size_max=50, overlap=20
-    )
+    blocks = bp.split_into_blocks(source, processes=10, axes=[2], size_min=30, size_max=50, overlap=20)
     print(blocks)
 
     b = blocks[0]
